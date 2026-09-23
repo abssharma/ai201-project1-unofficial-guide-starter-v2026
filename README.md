@@ -22,6 +22,8 @@
 
 ## What This Does
 
+A retrieval-augmented generation (RAG) system built around the `campus_life` corpus that retrieves relevant campus documents for a user's question and uses those documents to generate an answer with source attribution. The system is designed to answer questions about campus housing, dining, courses, administration, transportation, and other campus-life topics while refusing questions that fall outside the information covered by the corpus.
+
 <!-- Three or four sentences. Which corpus you picked, and the kinds of
      questions your system answers. Write it for someone who has never seen
      this repo.
@@ -162,9 +164,9 @@ The retrieval distance for this question was the best among all in-scope questio
 
      Milestone 5. -->
 
-**1.**
+**1.** I asked Claude to help me evaluate whether the starter chunker’s fixed 800-character windows made sense for my `campus_life` corpus. After inspecting the documents, I found that they were short and mostly self-contained, ranging from 178 to 549 characters. Based on that analysis, I changed `split_documents()` to keep each source document as one complete chunk.
 
-**2.**
+**2.** I asked Claude to help me evaluate my Milestone 2 questions. During Milestone 4, I found that my question "Which course has no final exam but drops the lowest midterm?" could match both STAT 150 and PHYS 130. I revised the question to include the compulsory lab and three-midterm details so that PHYS 130 was the specific expected answer.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
