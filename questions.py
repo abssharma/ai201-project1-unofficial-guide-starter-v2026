@@ -40,11 +40,11 @@ QUESTIONS = [
         "expects": "22 minutes",
     },
     {
-    # Revised because the original wording matched both STAT 150 and PHYS 130.
-    # Original: "Which course has no final exam but drops the lowest midterm?"
-    # Expected: PHYS 130 | Retrieved: STAT 150
-    "question": "Which course has no final exam, requires a lab, and drops the lowest of three midterms?",
-    "expects": "PHYS 130",
+        # Revised because the original wording matched both STAT 150 and PHYS 130.
+        # Original: "Which course has no final exam but drops the lowest midterm?"
+        # Expected: PHYS 130 | Retrieved: STAT 150
+        "question": "Which course has no final exam, requires a lab, and drops the lowest of three midterms?",
+        "expects": "PHYS 130",
     },
 ]
 

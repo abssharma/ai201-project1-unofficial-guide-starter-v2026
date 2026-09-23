@@ -55,7 +55,7 @@ in at least 4 of 5 tries.
 
 ---
 
-## 4. Something about your chunks
+## 4. 300-700 chunk character limit instead of 800
 
 At least 4 of 5 sampled chunks should contain between 300 and 700 characters and should not cut off a sentence at either boundary.
 <!-- YOU WRITE THIS ONE.
@@ -76,7 +76,7 @@ At least 4 of 5 sampled chunks should contain between 300 and 700 characters and
 
 ---
 
-## 5. Your choice
+## 5. Multi-Document Retrieval + Calculation
 
 For at least 4 of my 5 test questions, the system should correctly answer the question, including questions that require arithmetic or information from multiple documents.
 

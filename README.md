@@ -126,10 +126,9 @@ The walk from Fenwick Court to central campus normally takes 18 minutes, but you
 
 **Sources:** `housing_fenwick_court.txt`, `transit_walking.txt`
 
-**My relevance cutoff:** 0.6
-```
+**My relevance cutoff:** `0.6`
+
 The retrieval distance for this question was the best among all in-scope questions, at 0.259, which is below the 0.6 relevance cutoff. The retrieved chunks included both the normal Fenwick Court walking time and the additional winter walking time. This question also demonstrates semantic difficulty, multi-document retrieval, reasoning and calculation, clear grounding, and strong relevance.
-```
 
 <!-- The number you set in config.py, and how you got there.
 
