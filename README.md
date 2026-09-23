@@ -43,7 +43,7 @@
 
      Milestone 3. -->
 
-The starter chunker used fixed 800-character windows, but the `campus_life` corpus contains 88 short, mostly self-contained documents. The documents range from 178 to 549 characters, with an average of 317 characters, so none of them need to be split into multiple chunks. After inspecting the documents and sample chunks, I chose to preserve each source document as one complete retrieval unit instead of splitting related information across arbitrary character boundaries, implementated in `chunker.py::split_documents`
+The starter chunker used fixed 800-character windows, but the `campus_life` corpus contains 88 short, mostly self-contained documents. The documents range from 178 to 549 characters, with an average of 317 characters, so none of them need to be split into multiple chunks. After inspecting the documents and sample chunks, I chose to preserve each source document as one complete retrieval unit instead of splitting related information across arbitrary character boundaries, implementing this strategy in `chunker.py::split_documents`
 
 ## Sample Chunks
 
@@ -115,14 +115,19 @@ Laundry costs $1.75 wash, $1.75 dry, app-based. On noise: moderate; the building
 <!-- One complete question and answer, pasted as text, with the source line
      visible. Milestone 4. -->
 
-**Question:**
+**Question:** How long should I expect the walk from Fenwick Court to central campus to take in winter?
 
 **Answer:**
-
 ```
+The walk from Fenwick Court to central campus normally takes 18 minutes, but you should add four minutes in winter because the path past the pond ices over.
 ```
 
-**My relevance cutoff:**
+**Sources:** `housing_fenwick_court.txt`, `transit_walking.txt`
+
+**My relevance cutoff:** 0.6
+```
+The retrieval distance for this question was the best among all in-scope questions, at 0.259, which is below the 0.6 relevance cutoff. The retrieved chunks included both the normal Fenwick Court walking time and the additional winter walking time. This question also demonstrates semantic difficulty, multi-document retrieval, reasoning and calculation, clear grounding, and strong relevance.
+```
 
 <!-- The number you set in config.py, and how you got there.
 
@@ -135,7 +140,16 @@ Laundry costs $1.75 wash, $1.75 dry, app-based. On noise: moderate; the building
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| Where on campus can I do the cheapest complete wash-and-dry laundry cycle, and how much does it cost? | In | 0.338 |
+| Which residence offers the most independent living arrangement and a full kitchen? | In | 0.502 |
+| If I want the shortest wait for lunch, which dining hall should I choose? | In | 0.342 |
+| How long should I expect the walk from Fenwick Court to central campus to take in winter? | In | 0.259 |
+| Which course has no final exam, requires a lab, and drops the lowest of three midterms? | In | 0.438 |
+| What is the capital of Mongolia? | Out | 0.825 |
+| How do I change the oil in a diesel engine? | Out | 0.939 |
+| Who won the 1994 World Cup? | Out | 0.886 |
+| What is the recommended dosage of ibuprofen for a headache? | Out | 0.844 |
+| How do I write a for loop in Rust? | Out | 0.896 |
 
 ## How I Used AI
 
