@@ -45,7 +45,7 @@ A retrieval-augmented generation (RAG) system built around the `campus_life` cor
 
      Milestone 3. -->
 
-The starter chunker used fixed 800-character windows, but the `campus_life` corpus contains 88 short, mostly self-contained documents. The documents range from 178 to 549 characters, with an average of 317 characters, so none of them need to be split into multiple chunks. After inspecting the documents and sample chunks, I chose to preserve each source document as one complete retrieval unit instead of splitting related information across arbitrary character boundaries, implementing this strategy in `chunker.py::split_documents`
+The starter chunker used fixed 800-character windows, but the `campus_life` corpus contains 88 short, mostly self-contained documents. The documents range from 178 to 549 characters, with an average of 317 characters, so none of them need to be split into multiple chunks. After inspecting the documents and sample chunks, I chose to preserve each source document as one complete retrieval unit instead of splitting related information across arbitrary character boundaries, implementing this strategy in `chunker.py::split_documents`.
 
 ## Sample Chunks
 

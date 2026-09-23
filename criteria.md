@@ -78,7 +78,7 @@ At least 4 of 5 sampled chunks should contain between 300 and 700 characters and
 
 ## 5. Multi-Document Retrieval + Calculation
 
-For at least 4 of my 5 test questions, the system should correctly answer the question, including questions that require arithmetic or information from multiple documents.
+For at least 4 of my 5 test questions, the system should produce an answer that matches the expected answer in `questions.py`, including questions that require arithmetic or information from multiple documents.
 
 <!-- YOU WRITE THIS ONE TOO.
 
@@ -90,7 +90,7 @@ For at least 4 of my 5 test questions, the system should correctly answer the qu
 
 
 
-**Why this target:** I specifically included an arithmetic question and two multi-document questions because I want to test whether my RAG pipeline can do more than retrieve a single matching passage. I chose 4 of 5 because I want the system to handle these more challenging question types reliably while allowing one possible failure.
+**Why this target:** I specifically included an arithmetic question and two multi-document questions because I want to test whether the RAG pipeline can do more than retrieve a single matching passage. I chose 4 of 5 because I want the system to handle these more challenging question types reliably while allowing one possible failure.
 
 ---
 
