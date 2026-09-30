@@ -135,27 +135,62 @@ The retrieval distance for this question was the best among all in-scope questio
 
 ## Run Log — Before
 
-<!-- Your five criteria, three runs each. `python run_eval.py --label before`
-     runs the questions, puts the OUT_OF_SCOPE ones through the gate, and
-     writes it all into results/ for you. Targets come from criteria.md; the
-     verdict column is your call.
-
-     Criterion 3 is measured in one deterministic pass rather than three, so
-     the same number goes in all three run columns. That's correct, not lazy.
-
-     Milestone 1. -->
-
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Sample chunks are 300-700 chars and don't cut a sentence | 4 of 5 | 4/5 | 4/5 | 4/5 | MET |
+| 5. Answer matches `expects` | 4 of 5| 4/5 | 4/5 | 4/5 | MET |
 
-<!-- Underneath, paste the REAL output for each criterion from one of your
-     runs — the actual text your system produced, not a description of it.
-     Name the file and function that produced it. -->
+### Real output (from `results/` log labelled `before`, 2026-09-30)
+
+**Criterion 1: retrieved chunk contains the answer.** Produced by `store.py::search`. Run 1, Fenwick question (best distance 0.2594):
+
+Sources retrieved: health_center.txt, housing_fenwick_court.txt, transit_shuttle.txt, transit_walking.txt, winter_gear.txt
+
+Both files holding the answer (`housing_fenwick_court.txt`, `transit_walking.txt`) were retrieved. The other four questions also had their answer file in the top 5 in every run (e.g. `housing_morrow_house_laundry.txt`, `housing_tamsin_court.txt`, `dining_north_kitchen_followup.txt`, `course_phys_130.txt`).
+
+**Criterion 2: every answer names a source.** Produced by `generate.py` (answer text) using chunks from `store.py::search`. Run 1, kitchen question:
+
+```
+Tamsin Court offers the most independent housing on campus and is the only option with a full kitchen (housing_tamsin_court.txt).
+```
+
+**Criterion 3: gate stops out-of-corpus questions.** Produced by `run_eval.py::check_out_of_scope`, cutoff 0.6. Refused 5 of 5:
+
+| Out-of-scope question | Best distance | Gate |
+|---|---|---|
+| What is the capital of Mongolia? | 0.825 | refused |
+| How do I change the oil in a diesel engine? | 0.934 | refused |
+| Who won the 1994 World Cup? | 0.886 | refused |
+| What is the recommended dosage of ibuprofen for a headache? | 0.844 | refused |
+| How do I write a for loop in Rust? | 0.896 | refused |
+
+**Criterion 4: chunk length.** Produced by `chunker.py::split_documents`, measured on the five README sample chunks:
+
+```
+admin_add_drop_deadline.txt            300  (in range)
+course_biol_160.txt                    379  (in range)
+course_hist_118_workload.txt           274  (out of range)
+dining_pellew_dining_hall_followup.txt 367  (in range)
+housing_innisfree_hall.txt             516  (in range)
+```
+4 of 5 in range. Same number in all three columns because it is deterministic.
+
+**Criterion 5: answer matches `expects`.** Produced by `scorer.py::judge`. A passing answer (run 1, PHYS 130 question, expects "PHYS 130"):
+
+```
+PHYS 130 Mechanics has no final exam, a compulsory lab, three midterms with the lowest dropped, and a lab practical (from course_phys_130.txt and course_phys_130_exams.txt).
+```
+
+A failing answer (run 1, Fenwick question, expects "22 minutes"; it failed in all three runs):
+
+```
+The walk from Fenwick Court to central campus takes about 18 minutes, but you should add four minutes in winter because the path past the pond ices over. 
+
+Sources: `transit_walking.txt` and `housing_fenwick_court.txt`
+```
 
 ## Verdicts
 
