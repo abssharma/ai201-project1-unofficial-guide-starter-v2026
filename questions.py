@@ -22,7 +22,6 @@ names a target of "4 of 5", and four of three is not a thing.
 """
 
 QUESTIONS = [
-    # {"question": "...", "expects": "..."},
     {
         "question": "Where on campus can I do the cheapest complete wash-and-dry laundry cycle, and how much does it cost?", 
         "expects": "Morrow House",
@@ -49,7 +48,7 @@ QUESTIONS = [
 ]
 
 # Questions from a different world entirely. Your gate should refuse all five.
-#
+
 # There are five of these because criterion 3 in criteria.md names a target of
 # "at least 4 of 5" — you need five things to try before you can report 4 of 5.
 # `run_eval.py` runs these through retrieval and the gate on every eval and

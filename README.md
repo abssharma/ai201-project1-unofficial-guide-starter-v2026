@@ -1,6 +1,5 @@
 # The Unofficial Guide
 
-<!-- Replace this line with your name and which corpus you picked. -->
 **Abhinav Sharma → corpus: `campus_life`**
 
 > **This file is your submission.** Fill it in as you go — most sections get
@@ -24,39 +23,14 @@
 
 A retrieval-augmented generation (RAG) system built around the `campus_life` corpus that retrieves relevant campus documents for a user's question and uses those documents to generate an answer with source attribution. The system is designed to answer questions about campus housing, dining, courses, administration, transportation, and other campus-life topics while refusing questions that fall outside the information covered by the corpus.
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
-
-     Milestone 5. -->
-
 ## Chunking Strategy
 
 **Chunk size:** Not fixed by character count. Each source document is kept as one chunk.
 **Overlap:** None
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
-
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
-
-     Milestone 3. -->
-
 The starter chunker used fixed 800-character windows, but the `campus_life` corpus contains 88 short, mostly self-contained documents. The documents range from 178 to 549 characters, with an average of 317 characters, so none of them need to be split into multiple chunks. After inspecting the documents and sample chunks, I chose to preserve each source document as one complete retrieval unit instead of splitting related information across arbitrary character boundaries, implementing this strategy in `chunker.py::split_documents`.
 
 ## Sample Chunks
-
-<!-- Five chunks, pasted as text. Label each one and name the file it came from
-     AND the function that produced it — the grader checks your code against
-     what you claim here.
-
-     `python app.py chunks -n 5` prints all three for you. Copy them straight
-     across.
-
-     Milestone 3. -->
 
 **Chunk 1** — source: `admin_add_drop_deadline.txt#0` — produced by: `chunker.py::split_documents`
 
@@ -114,9 +88,6 @@ Laundry costs $1.75 wash, $1.75 dry, app-based. On noise: moderate; the building
 
 ## Sample Answer
 
-<!-- One complete question and answer, pasted as text, with the source line
-     visible. Milestone 4. -->
-
 **Question:** How long should I expect the walk from Fenwick Court to central campus to take in winter?
 
 **Answer:**
@@ -129,15 +100,6 @@ The walk from Fenwick Court to central campus normally takes 18 minutes, but you
 **My relevance cutoff:** `0.6`
 
 The retrieval distance for this question was the best among all in-scope questions, at 0.259, which is below the 0.6 relevance cutoff. The retrieved chunks included both the normal Fenwick Court walking time and the additional winter walking time. This question also demonstrates semantic difficulty, multi-document retrieval, reasoning and calculation, clear grounding, and strong relevance.
-
-<!-- The number you set in config.py, and how you got there.
-
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
-
-     Milestone 4. -->
 
 | Question | In corpus? | Best distance |
 |---|---|---|
@@ -153,15 +115,6 @@ The retrieval distance for this question was the best among all in-scope questio
 | How do I write a for loop in Rust? | Out | 0.896 |
 
 ## How I Used AI
-
-<!-- Two specific moments. For each: what you asked for, what came back, and
-     what you changed about it.
-
-     "I asked Claude to write the chunking function from my notes. It ignored
-     the overlap, so I added that myself" is the level of detail we're after.
-     "I used AI to help me code" is not.
-
-     Milestone 5. -->
 
 **1.** I asked Claude to help me evaluate whether the starter chunker’s fixed 800-character windows made sense for my `campus_life` corpus. After inspecting the documents, I found that they were short and mostly self-contained, ranging from 178 to 549 characters. Based on that analysis, I changed `split_documents()` to keep each source document as one complete chunk.
 
