@@ -218,7 +218,7 @@ Sources: `transit_walking.txt` and `housing_fenwick_court.txt`
 
 Retrieval and chunking were not the cause of the Fenwick failure, and it is narrower than "the model can't do arithmetic". The laundry question also needs addition (wash + dry, then comparing five residences), and the model stated "$2.75" correctly in all three runs. The difference I can see is that the laundry chunks list wash and dry as two prices for one cycle, while `transit_walking.txt` gives 18 minutes as a base and "add four minutes in winter" as an adjustment, which the model reported as an adjustment without summing. That is my hypothesis from the outputs, not something the runs prove. Also, `expects` for the laundry question is "Morrow House", so the scorer never checked the total; I checked the $2.75 by reading the answers.
 
-### Second observation (checked, not a pipeline problem)
+### Second Observation (checked, not a pipeline problem)
 
 The output of `python app.py ask "How long should I expect the walk from Fenwick Court to central campus to take in winter?" --show-prompt` appeared to show words joined together in the chunk text, for example "wayround", "kitchenettemeans", "aboutthree", "pointof", "aweek" and "fora". I checked and could not reproduce it in the pipeline: `repr()` of the text returned by `ingest.py::load_documents` for `transit_walking.txt` shows normal spaces ("...people take the long way round." and "Ridgeway Café"), `grep -rla "wayround"` finds the string nowhere in the repo, and a `grep` of `store.py`, `app.py` and `gate.py` found nothing that rewrites chunk text. The joins were most likely an artifact of copying the terminal output. This is not a loading, chunking or retrieval defect, so I made no change and it does not affect any verdict.
 
@@ -294,7 +294,7 @@ Sources retrieved: health_center.txt, housing_fenwick_court.txt, transit_shuttle
 0 model calls this session, 1 served from cache
 ```
 
-**tests**
+**Tests for Second Observation**
 
 `grep -rl "wayround" corpora/campus_life/`
 ```
@@ -393,17 +393,22 @@ This is limited evidence: one question, three runs, one prompt change. Some thin
 
 ## What's Still Broken
 
-<!-- For each criterion still missed after your fix: what you'd do about it,
-     and why you stopped where you did.
+No criterion is MISSED after the fix (all five MET, criterion 5 now 5/5). What remains is weakness in how I measured, and in how much the fix can be trusted.
 
-     "I ran out of time" is fine if it's true. Pretending nothing is left is
-     not.
-
-     Milestone 5. -->
+- **The fix is only tested on one question.** Fenwick went from 0/3 to 3/3, but that is one question and three runs. I don't know whether the rule generalises to other "base plus adjustment" questions. I would write three or four more questions including arithmetic calculations and run them.
+- **The rule is applied inconsistently.** In the After log, Fenwick showed the sum in all three runs but in three different formats. Laundry showed an explicit calculation only in run 1. Nothing forces the model to show its working. I would play around by tightening the instruction wording or test a fixed output format, and measure again.
+- **The scorer is a substring match.** `scorer.py::judge` would fail a correct answer that said "22 min", and for laundry it checks only "Morrow House", so a wrong total would still pass. I checked $2.75 by reading the answers, not by scoring. What I'd do: make `expects` check the total as well as the name.
+- **Criterion 4 measures very little.** Only 47 of 88 chunks are between 300 and 700 characters, yet it was MET on a 5-chunk sample, and the "no cut sentence" half is always true because each chunk is a whole document.
+- **The answers got a bit longer for some runs**, against the "two or three sentences" instruction, because of the added calculation lines.
 
 ## What I'd Do Differently
 
-<!-- Knowing what you know now — which of your five criteria would you write
-     differently, and why?
+**Criterion 4 (mine):** I'd measure all chunks instead of a 5-chunk sample, and drop the 300-character floor, which sits near my corpus mean (317) so nearly half the documents fall below it. I'd replace it with something that can fail, such as "every chunk contains at least one complete fact a question could be answered from."
 
-     Milestone 5. -->
+**Criterion 5 (mine):** I'd tighten the target to 5 of 5 and make `expects` stricter for the arithmetic questions: "22 minutes" plus the shown calculation for Fenwick, and "$2.75" as well as "Morrow House" for laundry. I'd also add more arithmetic questions, since I only had two.
+
+**Provided criteria (briefly):** Criterion 2 would say "names the correct source file", because the grounding instruction already tells the model to name a file. Criterion 3 would use out-of-scope questions that share vocabulary with campus life.
+
+## How I used AI (Unit 2)
+
+In Unit 2, I used Claude to help diagnose the Fenwick failure. It first told me the two figures (18 and +4) were in different documents. When I printed the prompt with `--show-prompt`, both were in `transit_walking.txt`, so I corrected my diagnosis. Moreover, it suggested several explanations for the joined words in the prompt (`ingest.py`, a stale index, hidden characters). I tested each with `grep` and `repr()`, and none held up, so I concluded it was a copy artifact and made no change.
