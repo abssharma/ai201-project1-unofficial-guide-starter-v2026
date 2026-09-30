@@ -204,24 +204,6 @@ Sources: `transit_walking.txt` and `housing_fenwick_court.txt`
 
 ## Diagnoses
 
-<!-- For each miss: which stage caused it, and how. The stage alone isn't
-     enough — you need the mechanism.
-
-     Not a diagnosis: "Question 3 didn't work."
-     A diagnosis:     "Question 3 asks about laundry costs. The answer is in
-                       one sentence that got split across two chunks, so
-                       neither chunk on its own contains it."
-
-     The five stages: loading → chunking → embedding → retrieval → generation.
-
-     Look for a pattern. If three misses all ask about numbers, that's one
-     problem, not three.
-
-     Missed nothing? Say so, then say honestly whether your targets were set
-     low, and which one you'd tighten and to what.
-
-     Milestone 3. -->
-
 **Result:** No criterion was MISSED at its target, so there is no criterion-level miss to diagnose. One question did fail every run, and I diagnose it below. I also found that several of my targets were too easy.
 
 ### Fenwick question (Q4): failed 3 of 3 runs on the `expects` check
@@ -236,9 +218,7 @@ Sources: `transit_walking.txt` and `housing_fenwick_court.txt`
 
 Retrieval and chunking were not the cause of the Fenwick failure, and it is narrower than "the model can't do arithmetic". The laundry question also needs addition (wash + dry, then comparing five residences), and the model stated "$2.75" correctly in all three runs. The difference I can see is that the laundry chunks list wash and dry as two prices for one cycle, while `transit_walking.txt` gives 18 minutes as a base and "add four minutes in winter" as an adjustment, which the model reported as an adjustment without summing. That is my hypothesis from the outputs, not something the runs prove. Also, `expects` for the laundry question is "Morrow House", so the scorer never checked the total; I checked the $2.75 by reading the answers.
 
-### Second observation (loading stage, not fixed)
-
-### Second observation (loading stage, not fixed)
+### Second observation (checked, not a pipeline problem)
 
 The output of `python app.py ask "How long should I expect the walk from Fenwick Court to central campus to take in winter?" --show-prompt` appeared to show words joined together in the chunk text, for example "wayround", "kitchenettemeans", "aboutthree", "pointof", "aweek" and "fora". I checked and could not reproduce it in the pipeline: `repr()` of the text returned by `ingest.py::load_documents` for `transit_walking.txt` shows normal spaces ("...people take the long way round." and "Ridgeway Café"), `grep -rla "wayround"` finds the string nowhere in the repo, and a `grep` of `store.py`, `app.py` and `gate.py` found nothing that rewrites chunk text. The joins were most likely an artifact of copying the terminal output. This is not a loading, chunking or retrieval defect, so I made no change and it does not affect any verdict.
 

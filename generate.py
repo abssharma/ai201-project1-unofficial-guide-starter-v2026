@@ -279,8 +279,8 @@ Rules:
 - Use only the information in the documents below. Do not use anything you know from elsewhere.
 - If the documents don't cover the question, say you don't have enough information. Do not guess.
 - Name the document your answer came from, using the filename given in each excerpt.
+- If the question needs figures from the documents added or compared, state the final result explicitly and show the calculation.
 - Be brief. Two or three sentences is usually enough."""
-
 
 def build_prompt(question: str, results) -> str:
     """
