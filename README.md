@@ -348,34 +348,48 @@ Criteria 1-3 were provided in the template; criteria 4 and 5 are the two I wrote
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** Added one rule to `GROUNDING_INSTRUCTION` in `generate.py`: "If the question needs figures from the documents added or compared, state the final result explicitly and show the calculation." Nothing else changed: same chunks, same index, same cutoff (0.6), same top-k (5), same questions and scorer.
 
-**Why I picked it:**
+**Why I picked it:** The Fenwick question failed all three runs at the generation stage. Retrieval returned `transit_walking.txt` with both figures (18 minutes, plus four in winter), but the instruction never told the model to combine them and asked it to be brief, so it never stated 22 minutes.
 
-<!-- Connect it to a specific diagnosis above in one sentence. If you can't,
-     you picked a fix because it sounded impressive. -->
-
-### Run Log — After
-
-<!-- Same format, same five criteria, three runs each.
-     `python run_eval.py --label after` -->
+### Run Log (After)
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Sample chunks are 300-700 chars and don't cut a sentence | 4 of 5 | 4/5 | 4/5 | 4/5 | MET |
+| 5. Answer matches `expects` | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
 
-**Did it help?**
+### Real output (from `results/` log labelled `after`, 2026-09-30)
 
-<!-- Say plainly whether it did, and how you know. If it made things worse,
-     say that — a change that backfired, honestly reported, earns full credit
-     and is more interesting than one that worked. What matters is that you can
-     tell.
+**Fenwick question, run 3 (failed 3 of 3 before, passed 3 of 3 after):**
 
-     Milestone 4. -->
+```
+The walk from Fenwick Court to central campus normally takes 18 minutes, but you should add four minutes in winter because the path past the pond ices over (transit_walking.txt, housing_fenwick_court.txt). 
+
+Calculation: 18 minutes + 4 minutes = 22 minutes. 
+Final result: 22 minutes.
+```
+
+**Laundry question, run 1 (the rule also applies here):**
+
+```
+Based on the documents provided, the cheapest complete wash-and-dry laundry cycle is in Morrow House, where it costs $2.75 ($1.50 wash + $1.25 dry). 
+
+Calculation: $1.50 (wash) + $1.25 (dry) = $2.75.
+
+This information comes from `housing_morrow_house_laundry.txt`.
+```
+
+**Did it help?** Yes, on the one failure I targeted. Fenwick went from 0 of 3 to 3 of 3, so criterion 5 went from 4/5 to 5/5 in every run. Retrieval distances and retrieved sources were identical to Before, so the change came from the prompt alone. That fits my diagnosis that the model had the two figures and was not told to combine them.
+
+This is limited evidence: one question, three runs, one prompt change. Some things I noticed:
+- The rule is followed inconsistently. Fenwick showed the sum in all three runs, in three different formats (inline "18 + 4 = 22", a "Calculation:" block, and "Final result:"). Laundry showed an explicit calculation only in run 1; runs 2 and 3 just stated $2.75.
+- Nothing else got worse. The other four questions still passed, all 15 answers still name a source, and laundry still gives $2.75 and Morrow House. Answers for kitchen, lunch and PHYS 130 are worded slightly differently, which is normal variation between runs.
+- The scorer is still a substring match, so the passes show "22 minutes" appeared, not that the arithmetic was shown in a consistent way. A phrasing like "22 min" would still fail.
+- Criterion 5 now passes 5/5 but still only for the reason I diagnosed. It says nothing about arithmetic questions I have not written.
 
 ## What's Still Broken
 
