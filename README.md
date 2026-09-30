@@ -32,7 +32,7 @@ The starter chunker used fixed 800-character windows, but the `campus_life` corp
 
 ## Sample Chunks
 
-**Chunk 1** — source: `admin_add_drop_deadline.txt#0` — produced by: `chunker.py::split_documents`
+**Chunk 1** (source: `admin_add_drop_deadline.txt#0`) | produced by: `chunker.py::split_documents`
 
 ```
 On the add/drop deadline
@@ -40,7 +40,7 @@ On the add/drop deadline
 You can add a course through the end of the second week. Dropping is a longer window — through the end of week six — but a drop after week two shows as a W on your transcript. Nothing anywhere on the registrar's site says this plainly, and students find out from each other.
 ```
 
-**Chunk 2** — source: `course_biol_160.txt#0` — produced by: `chunker.py::split_documents`
+**Chunk 2** (source: `course_biol_160.txt#0`) | produced by: `chunker.py::split_documents`
 
 ```
 BIOL 160 Cell Biology 
@@ -52,7 +52,7 @@ Expect 9 to 11 hours a week, the heaviest first-year course by reputation.
 The one piece of advice: the unit tests come fast, roughly every three weeks; falling behind once is very hard to recover from.
 ```
 
-**Chunk 3** — source: `course_hist_118_workload.txt#0` — produced by: `chunker.py::split_documents`
+**Chunk 3** (source: `course_hist_118_workload.txt#0`) | produced by: `chunker.py::split_documents`
 
 ```
 Workload for HIST 118 Modern World History
@@ -62,7 +62,7 @@ People keep asking so: a lot of reading, about 120 pages a week, but no problem 
 It's front-loaded — the first month is heavier than the rest, partly because you're learning the format.
 ```
 
-**Chunk 4** — source: `dining_pellew_dining_hall_followup.txt#0` — produced by: `chunker.py::split_documents`
+**Chunk 4** (source: `dining_pellew_dining_hall_followup.txt#0`) | produced by: `chunker.py::split_documents`
 
 ```
 Re: Pellew Dining Hall
@@ -72,7 +72,7 @@ Adding to what people have said about Pellew Dining Hall. The wait figure of 12 
 Also worth saying: the furthest hall from anywhere, next to the athletics centre. Nobody tells you this at orientation.
 ```
 
-**Chunk 5** — source: `housing_innisfree_hall.txt#0` — produced by: `chunker.py::split_documents`
+**Chunk 5** (source: `housing_innisfree_hall.txt#0`) | produced by: `chunker.py::split_documents`
 
 ```
 Innisfree Hall — what it's actually like
@@ -133,7 +133,7 @@ The retrieval distance for this question was the best among all in-scope questio
      unit 1 — the point is that someone can see what you said before you knew
      how it went. -->
 
-## Run Log — Before
+## Run Log (Before)
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
@@ -150,6 +150,8 @@ The retrieval distance for this question was the best among all in-scope questio
 Sources retrieved: health_center.txt, housing_fenwick_court.txt, transit_shuttle.txt, transit_walking.txt, winter_gear.txt
 
 Both files holding the answer (`housing_fenwick_court.txt`, `transit_walking.txt`) were retrieved. The other four questions also had their answer file in the top 5 in every run (e.g. `housing_morrow_house_laundry.txt`, `housing_tamsin_court.txt`, `dining_north_kitchen_followup.txt`, `course_phys_130.txt`).
+
+Confirmed by reading the chunks. Lunch question: dining_north_kitchen_followup.txt#0 contains "The wait figure of none matches what I've seen." Laundry question: housing_morrow_house_laundry.txt#0 contains "$1.50 wash, $1.25 dry", and the other four laundry files were also in the top 5, so the "cheapest" comparison was possible from the retrieved chunks alone.
 
 **Criterion 2: every answer names a source.** Produced by `generate.py` (answer text) using chunks from `store.py::search`. Run 1, kitchen question:
 
@@ -194,22 +196,15 @@ Sources: `transit_walking.txt` and `housing_fenwick_court.txt`
 
 ## Verdicts
 
-<!-- MET or MISSED for each of the five, against the target you wrote last
-     unit — not a new one. Plus a sentence on how you decided. That sentence
-     matters most where it was close.
-
-     If your target said 4 of 5 and your runs came out 4, 3, 4, that's a MISS.
-     The target has to hold, not show up occasionally.
-
-     Milestone 2. -->
-
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunk contains the answer (4 of 5) | MET | 5/5 in all three runs. In every question the file(s) holding the answer were in the top 5, and I opened the lunch and laundry chunks to confirm they contain the wait figure and prices. Not close. Caveat: the laundry ("cheapest") and Fenwick questions needed several chunks together, since no single chunk holds the whole answer. |
+| 2 | Every answer names a source (5 of 5) | MET | 15 of 15 answers (5 questions x 3 runs) named at least one source file. The target was all five, and it held every run. |
+| 3 | Gate stops out-of-corpus questions (4 of 5) | MET | 5/5 refused. The worst in-scope distance was 0.502 and the best out-of-scope was 0.825, so the 0.6 cutoff sits in a wide gap. The target was safe, not tested hard. |
+| 4 | Sample chunks 300-700 chars, no cut sentence (4 of 5) | MET | 4/5 in range (lengths 300, 379, 274, 367, 516). It passes by the narrowest margin: add/drop is exactly 300 and HIST 118 missed at 274. The "no cut sentence" half is trivially true because each chunk is a whole document. |
+| 5 | Answer matches `expects` (4 of 5) | MET | 4/5 in all three runs. Q4 (Fenwick) failed every run because answers said "18 minutes, plus four minutes" and never "22 minutes". The target of 4 of 5 holds, but with zero slack. |
+
+**Note:** My Unit 1 table lists the diesel-engine out-of-scope question at a best distance of 0.939, while the Unit 2 run log (`run_eval.py::check_out_of_scope`) reports 0.934. Retrieval should be deterministic, so I have left the Unit 1 section as written and am flagging the difference here. It does not affect any verdict: both values are far above the 0.6 cutoff, and the question was refused either way.
 
 ## Diagnoses
 
